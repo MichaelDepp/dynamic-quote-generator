@@ -65,9 +65,9 @@ def createImage(text):
     fontSize, textBoxGap, startingHeight, wordBreak = wordWrapper(text)
 
     image = Image.new('RGBA', (1080, 1080), '#EDCFCF')
-    font = ImageFont.truetype('Bogart-Bold-trial.ttf',
+    font = ImageFont.truetype('fonts/Bogart-Bold-trial.ttf',
                               size=fontSize)  # adjust the font size
-    font2 = ImageFont.truetype('AnonymousPro-Regular.ttf', size=32)
+    font2 = ImageFont.truetype('fonts/AnonymousPro-Regular.ttf', size=32)
     draw = ImageDraw.Draw(image)
     totalCircle = 3
 
@@ -162,14 +162,15 @@ def createImage(text):
 
 
 def writeMergedData(cleanData):
-    shuffledData = cleanData
-    # shuffledData = random.shuffle(cleanData)
+    # shuffledData = cleanData
+    shuffledData = random.sample(cleanData, len(cleanData))
     json_object = json.dumps(shuffledData, indent=4)
     print('****************** Writing Cleaned Unique Verse in Json File ******************')
     with open("unique-verses.json", "w") as outfile:
         outfile.write(json_object)
     print('****************** Finished Writing Cleaned Unique Verse in Json File ******************')
     text = 'Finally, be strengthened by the Lord and his powerful strength'
+    print('shufff ----- > ', shuffledData)
     # logVerse(cleanData)
     createImage(text)
 
