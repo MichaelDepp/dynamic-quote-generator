@@ -1,0 +1,77 @@
+[
+	{
+		"bg": "#1D7162",
+		"text": "#FEFFE4",
+		"box": "#D66B4B"
+	},
+	{
+		"bg": "#EFD0CE",
+		"text": "#1D7162",
+		"box": "#F0EADC"
+	},
+	{
+		"bg": "#C2FEBE",
+		"text": "#FFB9FF",
+		"box": "#5658FA"
+	},
+	{
+		"bg": "#C8F9FD",
+		"text": "#FF7DFF",
+		"box": "#FFF890"
+	},
+	{
+		"bg": "#EDCFCF",
+		"text": "#FFF890",
+		"box": "#F53D3D"
+	},
+	{
+		"bg": "#E6F367",
+		"text": "#000000",
+		"box": "#F0EADC"
+	},
+	{
+		"bg": "#F48B49",
+		"text": "#FEFFE4",
+		"box": "#D24730"
+	},
+	{
+		"bg": "#E6C157",
+		"text": "#F8ECD2",
+		"box": "#3764E5"
+	},
+	{
+		"bg": "#BFA8E0",
+		"text": "#000000",
+		"box": "#E6F367"
+	},
+	{
+		"bg": "#F0CBDC",
+		"text": "#E5E5E5",
+		"box": "#263B7C"
+	},
+	{
+		"bg": "#D4B26A",
+		"text": "#FEFFE4",
+		"box": "#352F33"
+	},
+	{
+		"bg": "#93BBA0",
+		"text": "#F96E17",
+		"box": "#EDB4D5"
+	},
+	{
+		"bg": "#F8ECD2",
+		"text": "#FCE3E2",
+		"box": "#D74619"
+	},
+	{
+		"bg": "#FDFFEA",
+		"text": "#545BE7",
+		"box": "#C3FFC1"
+	},
+	{
+		"bg": "#3764E5",
+		"text": "#353430",
+		"box": "#E7DECF"
+	}
+]
