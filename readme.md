@@ -15,6 +15,10 @@ This is python program uses [Pillow Module](https://pillow.readthedocs.io/en/sta
 - ✔️ Save the image and the image caption into a folder
 - ✔️ Each post folder increment by date
 
+## Generated Sample
+
+![sample-posts](sample.gif)
+
 ## Requirements
 
 - [Python Version 3](https://www.python.org/)
