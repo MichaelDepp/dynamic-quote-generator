@@ -1,10 +1,20 @@
+from fileinput import filename
 import json
+import sys
 from PIL import Image, ImageDraw, ImageFont
 import textwrap
 import random
+import datetime
+import os
 
 with open("verses.json", "r", encoding="utf8") as f:
     data = json.load(f)
+
+with open("colorConfig.json", "r", encoding="utf8") as j:
+    colorConfig = json.load(j)
+
+lastThreeBg = []
+lastThreeColor = []
 
 
 def wordWrapper(text):
@@ -12,7 +22,7 @@ def wordWrapper(text):
     textBoxGap = 0
     startingHeight = 0
     wordBreak = 0
-    print(len(text))
+
     if len(text) >= 250:
         fontSize = 45
         textBoxGap = 70
@@ -23,17 +33,17 @@ def wordWrapper(text):
         textBoxGap = 75
         startingHeight = -10
         wordBreak = 30
-    if 150 < len(text) < 200:
+    if 160 < len(text) < 200:
         fontSize = 55
         textBoxGap = 80
         startingHeight = -20
         wordBreak = 25
-    if 100 < len(text) <= 150:
+    if 90 < len(text) <= 160:
         fontSize = 60
         textBoxGap = 90
         startingHeight = 0
         wordBreak = 25
-    if 50 < len(text) <= 100:
+    if 50 < len(text) <= 90:
         fontSize = 75
         textBoxGap = 110
         startingHeight = +40
@@ -61,17 +71,67 @@ def logVerse(cleanedData):
         outfile.write(json_object)
 
 
-def createImage(text):
-    fontSize, textBoxGap, startingHeight, wordBreak = wordWrapper(text)
+def randomColorAsset(colors, fileName):
+    randomColor = random.choice(colors)
+    while randomColor in lastThreeColor:
+        randomColor = random.choice(colors)
 
-    image = Image.new('RGBA', (1080, 1080), '#EDCFCF')
+    if len(lastThreeColor) < 3:
+        lastThreeColor.append(randomColor)
+    else:
+        del lastThreeColor[0]
+        lastThreeColor.append(randomColor)
+
+    randomBg = random.choice(os.listdir('./assets'))
+    while randomBg in lastThreeBg:
+        randomBg = random.choice(os.listdir('./assets'))
+
+    if len(lastThreeBg) < 3:
+        lastThreeBg.append(randomBg)
+    else:
+        del lastThreeBg[0]
+        lastThreeBg.append(randomBg)
+
+    return randomColor, randomBg
+
+
+def writeCaptionFile(filePath, fileName, caption):
+    try:
+        completeName = os.path.join(filePath, fileName + ".txt")
+        file1 = open(completeName, "w")
+        file1.write(caption)
+        file1.close()
+    except:
+        print('Text file writing failed!')
+
+
+def createImage(verse, verseDate):
+    fileName = verseDate.strftime('%d-%m-%Y')
+    randomColor, randomBg = randomColorAsset(colorConfig, fileName)
+    # try:
+    #     path1 = 'generated-verses'
+    #     path2 = fileName
+    #     if not os.path.exists(path1):
+    #         print('first cond')
+    #         os.makedirs(path1)
+    #     if not os.path.exists(os.path.join(path1, path2)):
+    #         print('second condd')
+    #         os.makedirs(os.path.join(path1, path2))
+    # except:
+    #     print('creating folder went wrong')
+    #     # sys.exit()
+
+    fontSize, textBoxGap, startingHeight, wordBreak = wordWrapper(
+        verse['text'])
+
+    image = Image.new('RGBA', (1080, 1080), randomColor['bg'])
     font = ImageFont.truetype('fonts/Bogart-Bold-trial.ttf',
                               size=fontSize)  # adjust the font size
     font2 = ImageFont.truetype('fonts/AnonymousPro-Regular.ttf', size=32)
     draw = ImageDraw.Draw(image)
     totalCircle = 3
 
-    background_shape = Image.open('assets/x-bg.png')
+    background_shape = Image.open('assets/' + randomBg)
     background_shape.convert('RGBA')
 
     image.paste(background_shape, (0, 0), background_shape)
@@ -82,7 +142,7 @@ def createImage(text):
         draw.rounded_rectangle(shadowShape, fill='black',
                                outline='black', width=4, radius=25)
 
-        draw.rounded_rectangle(shape, fill='#EDCFCF',
+        draw.rounded_rectangle(shape, fill=randomColor['bg'],
                                outline='black', width=4, radius=25)
 
         draw.line((76, 187, 940 + 76, 187), fill='black', width=4)
@@ -98,10 +158,10 @@ def createImage(text):
         wrapper = textwrap.TextWrapper(
             width=wordBreak)  # adjust the text break
         (x, y) = (100, 400)
-        word_list = wrapper.wrap(text)
+        word_list = wrapper.wrap(verse['text'])
 
         def printText(line, x, y):
-            color = '#FFF890'
+            color = randomColor['text']
             draw.text((x + 20, y - 10), line, fill=color, font=font)
 
         def drawVerseBox():
@@ -120,13 +180,12 @@ def createImage(text):
                 secondX = (1080 / 2) + (textX / 2) + 20
                 secondY = y + averageTextBoxHeight
                 shape = (x, y, secondX, secondY)
-                draw.rectangle(shape, fill='#F53D3D')
+                draw.rectangle(shape, fill=randomColor['box'])
                 count += 1
-                print('thiss isss the yy ---- > ', textY)
                 printText(line, x, y)
 
         def printVerse():
-            text = '1 Corinthians 6:14'
+            text = verse['verse']
             textX, textY = font2.getsize(text)
             x = 977 - textX
             y = 133
@@ -142,14 +201,14 @@ def createImage(text):
         secondX = (1080 / 2) + (190 / 2)
         secondY = 1022 + 40
         shape = (x, y, secondX, secondY)
-        draw.rectangle(shape, fill='#F53D3D')
+        draw.rectangle(shape, fill=randomColor['box'])
 
     def drawFooterText():
         text = '@myf.tac'
         textX, textY = font2.getsize(text)
         x = (1080 / 2) - (textX / 2)
         y = 1023
-        color = '#FFF890'
+        color = randomColor['text']
         draw.text((x, y), text, fill=color, font=font2)
 
     drawFrame()
@@ -158,7 +217,44 @@ def createImage(text):
     drawFooter()
     drawFooterText()
 
-    image.save('verses-new.png', quality=100)
+    filePath = 'generated-verses/'
+    # image.save(filePath + fileName +
+    #            '/' + fileName + '.png', quality=100)
+    image.save(filePath + fileName + '.png', quality=100)
+    print('Post ' + fileName + '.png' + ' generated!!')
+    # writeCaptionFile(filePath + fileName + '/', fileName, verse['caption'])
+
+
+def generateArt(shuffledData):
+    year = int(input('\nEnter a year (number) : '))
+    month = int(input('\nEnter a month (number) : '))
+    day = int(input('\nEnter a day (number) : '))
+    startDate = datetime.date(year, month, day)
+    endDate = startDate + datetime.timedelta(days=len(shuffledData))
+
+    formatStyle = '%d %B %Y'
+    formatStartDate = startDate.strftime(formatStyle)
+    formatEndDate = endDate.strftime(formatStyle)
+    input("You've choose " + formatStartDate +
+          " as the starting date! (Enter any keyword to proceed) : ")
+    input("There are total " + str(len(shuffledData)) +
+          " verses that has been sorted, filtered, and shuffled and ready to be generated as bible verse posts! (Enter any keyword to proceed) : ")
+    input("The verses post will be generated for each day until " +
+          formatEndDate + ' (Enter any keyword to proceed) : ')
+    answer = input("Enter y/Y to proceed generating the verses: ")
+    answer = 'y'
+
+    if answer == 'y' or answer == 'Y':
+        count = 0
+        if not os.path.exists('generated-verses'):
+            os.makedirs('generated-verses')
+        for verse in shuffledData:
+            verseDate = startDate + datetime.timedelta(days=count)
+            createImage(verse, verseDate)
+            print('######## Created ' + str(count + 1) + ' post!! ########\n')
+            count += 1
+    else:
+        print('Program ends!')
 
 
 def writeMergedData(cleanData):
@@ -172,7 +268,8 @@ def writeMergedData(cleanData):
     text = 'Finally, be strengthened by the Lord and his powerful strength'
     print('shufff ----- > ', shuffledData)
     # logVerse(cleanData)
-    createImage(text)
+    generateArt(shuffledData)
+    # createImage(text)
 
 
 def filterDuplicates(mergedData):

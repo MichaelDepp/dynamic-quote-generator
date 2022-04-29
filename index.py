@@ -301,7 +301,7 @@ def generateArt(data, colorConfig):
         for verse in data:
             verseDate = startDate + datetime.timedelta(days=count)
             createPost(verse, verseDate, colorConfig)
-            print('######## Created ' + str(count) + ' post!! ########')
+            print('######## Created ' + str(count + 1) + ' post!! ########\n')
             count += 1
     else:
         print('Program ends!')
